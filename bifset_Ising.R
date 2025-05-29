@@ -477,7 +477,7 @@ for(sigma in sigmas)
 }
 
 plot_ly(
-  dat, x = ~tau, y = ~sigma, z = ~mu,
+  dat, x = ~-1*tau, y = ~sigma, z = ~mu,
   type = 'scatter3d', mode = 'markers',
   marker = list(size = 2, opacity = 0.6, color = ~stable,
                 colorscale = list(c(0, 'blue'), c(1, 'green'), c(2, 'red')))) %>%
@@ -488,3 +488,4 @@ plot_ly(
       zaxis = list(title = list(text = "μ", font = list(size = 18)))
     )
   )
+
