@@ -10,8 +10,8 @@
 ##Figure 2
 # beta tau
 pdf('figure2.pdf',h=8,w=10)#,paper='a4r')
-par(mar=c(4, 3, 2, 2))
-layout(matrix(c(1,2,3,4),2,2,byrow=T))
+par(mar=c(5, 4, 2, 2)+.5)
+layout(matrix(c(1,2,3,4),2,2,byrow=TRUE))
 
 MFtau_critical1 <- function(beta,sigma=1) # equation 4, solution 1
 (1/beta)*atanh(sqrt(1-1/(sigma*beta)))-sigma*sqrt(1-1/(sigma*beta))
@@ -21,21 +21,28 @@ MFtau_critical2 <- function(beta,sigma=1) # equation 4, solution 2
 
 sigma=1
 # panel 1: bifurcation set beta tau
-curve(MFtau_critical1,0,8,ylim=c(-1.3,1.3),ylab=expression(tau),xlab=expression(beta),bty='n', 
+curve(MFtau_critical1,0,6,ylim=c(-1.3,1.3),ylab=expression(tau),xlab=expression(beta),bty='n', 
       main=expression(paste('Bifurcation set for ',beta,',',tau,' (',sigma,' = 1)')),cex.main=1.6,cex.lab=1.8,cex.axis=1.2)
-curve(MFtau_critical2,0,8,add=T)
+curve(MFtau_critical2,0,8,add=TRUE)
 
 # add two lines to compare with hysteresis plots
 beta=4
 abline(h= MFtau_critical1(beta),col='blue')
 abline(h= MFtau_critical2(beta),col='blue')
+abline(v=4,col='blue',lty=3)
 
 # panel 2: bifurcation set beta tau, wider interval of beta
 
 sigma=1
 curve(MFtau_critical1,1,200,ylim=c(-1,1),ylab=expression(tau),xlab=expression(beta),bty='n', 
       main=expression(paste('Bifurcation set for ',beta,',',tau,' (',sigma,' = 1)')),cex.main=1.6,cex.lab=1.8,cex.axis=1.2)
-curve(MFtau_critical2,1,200,add=T)
+curve(MFtau_critical2,1,200,add=TRUE)
+beta=4
+abline(h= MFtau_critical1(beta),col='blue')
+abline(h= MFtau_critical2(beta),col='blue')
+abline(v=4,col='blue',lty=3)
+
+
 
 MFIsing <- function(mu) {  tanh(beta * (tau + mu * d * sigma)) - mu } # MF equation, equation 2
 d=1;sigma=1
@@ -61,8 +68,8 @@ matplot(dat[,2],dat[,-1:-2],type='p',cex.main=1.6,cex.lab=1.8,cex.axis=1.2,
 # check jump positions
 abline(v= MFtau_critical1(1)); abline(v= MFtau_critical2(1))
 abline(v= MFtau_critical1(4),col='blue'); abline(v= MFtau_critical2(4),col='blue')
-abline(v= MFtau_critical1(7)); abline(v= MFtau_critical2(7))
-abline(v= MFtau_critical1(100)); abline(v= MFtau_critical2(100))
+abline(v= MFtau_critical1(7),col='black'); abline(v= MFtau_critical2(7),col='black')
+abline(v= MFtau_critical1(100),col='black'); abline(v= MFtau_critical2(100),col='black')
 
 
 # check with real Ising simulation:
@@ -110,7 +117,7 @@ for(beta in betas)
   }
   
   tau=round(100000*tau,0)/100000
-  t=tapply(mm/n,list(tau,dir),mean,na.rm=T)
+  t=tapply(mm/n,list(tau,dir),mean,na.rm=TRUE)
   t=cbind(t,3)
   if(iter==1) data=t else data=rbind(data,t)
 }
@@ -134,9 +141,9 @@ plot(datal[,1],datal[,4],type='b',bty='n',xlab= expression(tau),lwd=2,ylab=expre
 beta=4
 abline(v= MFtau_critical1(beta),col='blue'); abline(v= MFtau_critical2(beta),col='blue')
 beta=7
-abline(v= MFtau_critical1(beta),col='blue'); abline(v= MFtau_critical2(beta),col='blue')
+abline(v= MFtau_critical1(beta),col='black'); abline(v= MFtau_critical2(beta),col='black')
 beta=100
-abline(v= MFtau_critical1(beta),col='blue'); abline(v= MFtau_critical2(beta),col='blue')
+abline(v= MFtau_critical1(beta),col='black'); abline(v= MFtau_critical2(beta),col='black')
 
 
 
@@ -146,23 +153,23 @@ V_Ising <- function(mu) {
 d=.06
 par(mar=c(0,0,0,0))
 
-beta=1;tau=0
-x=.05;y=.75;
+beta=.8;tau=0
+x=.08;y=.75;
 par(fig = c(x, x+d, y,y+d), new = TRUE)
 curve(V_Ising,-2,2,bty='n',xlab='',ylab='',xaxt = "n",yaxt = "n")
 
 beta=4;tau=0
-x=.2;y=.74;
+x=.21;y=.753;
 par(fig = c(x, x+d, y,y+d), new = TRUE)
 curve(V_Ising,-2,2,bty='n',xlab='',ylab='',xaxt = "n",yaxt = "n")
 
 beta=4;tau=.7
-x=.2;y=.85;
+x=.21;y=.85;
 par(fig = c(x, x+d, y,y+d), new = TRUE)
 curve(V_Ising,-2,2,bty='n',xlab='',ylab='',xaxt = "n",yaxt = "n")
 
 beta=4;tau=-.7
-x=.2;y=.63;
+x=.21;y=.63;
 par(fig = c(x, x+d, y,y+d), new = TRUE)
 curve(V_Ising,-2,2,bty='n',xlab='',ylab='',xaxt = "n",yaxt = "n")
 
@@ -189,12 +196,14 @@ MFtau_critical2s <- function(sigma,beta=1)
 beta=1
 curve(MFtau_critical1s,1,20,ylim=c(-20,20),ylab=expression(tau),xlab=expression(sigma),bty='n', 
       main=expression(paste('Bifurcation set for ',sigma,',',tau,' (',beta,' = 1)')),cex.main=1.6,cex.lab=1.8,cex.axis=1.2)
-curve(MFtau_critical2s,1,20,add=T)
+curve(MFtau_critical2s,1,20,add=TRUE)
 
 # check hysteresis at sigma = 10
 sigma=10
 abline(h= MFtau_critical1s(sigma),col='blue')
 abline(h= MFtau_critical2s(sigma),col='blue')
+abline(v=10,col='blue',lty=3)
+
 
 # hysteresis plot using the MF equation
 g <- function(mu) {  tanh(beta * (tau + mu * d * sigma)) - mu }
@@ -243,14 +252,21 @@ MF01tau_critical2=function(b,s=sigma)
 #panel 1 beta
 curve(MF01tau_critical1,4,15,ylim=c(-1,0),ylab=expression(tau),xlab=expression(beta),bty='n',cex.main=1.6,cex.lab=1.8,cex.axis=1.2,
       main=expression(paste('Bifurcation set for ',beta,',',tau,' (',sigma,' = 1)')))
-curve(MF01tau_critical2,4,15,add=T)
+curve(MF01tau_critical2,4,15,add=TRUE)
+
+# add two lines to compare with hysteresis plots
+beta=7
+abline(h= MF01tau_critical1(beta),col='blue')
+abline(h= MF01tau_critical2(beta),col='blue')
+abline(v=7,col='blue',lty=3)
+
 
 # equation 5
 MF01 <-function(p) 1/(1+exp(-beta*(d*sigma*p+tau)))-p
 d=1
 
 # panel 3: hysteresis
-taus=seq(-1.5,.2,length=200)
+taus=seq(-1.1,.2,length=200)
 betas=c(4,7,100)
 dat=matrix(0,length(taus)*length(betas),5)
 i=0
@@ -264,15 +280,15 @@ for(beta in betas)
 }
 matplot(dat[,1],dat[,-1:-2],type='p',
         pch=1,col=c(1,2,1),bty='n',xlab=expression(tau),ylab='p',cex.main=1.6,cex.lab=1.8,cex.axis=1.2,
-        cex=.4,main=expression(paste('Hysteresis for ',beta, '= 4,7,10,100')))
+        cex=.4,main=expression(paste('Hysteresis for ',beta, '= 4,7,100')))
 
 # checks
 beta=4
 abline(v= MF01tau_critical1(b=beta))
 abline(v= MF01tau_critical2(b=beta))
 beta=7
-abline(v= MF01tau_critical1(b=beta))
-abline(v= MF01tau_critical2(b=beta))
+abline(v= MF01tau_critical1(b=beta),col='blue')
+abline(v= MF01tau_critical2(b=beta),col='blue')
 beta=100
 abline(v= MF01tau_critical1(b=beta))
 abline(v= MF01tau_critical2(b=beta))
@@ -290,9 +306,15 @@ MF01tau_critical2=function(s,b=1)
 }
 
 
-curve(MF01tau_critical1,4,15,ylab=expression(tau),xlab=expression(sigma),bty='n', ylim=c(-15,0),
+curve(MF01tau_critical1,4,15,ylab=expression(tau),xlab=expression(sigma),bty='n', ylim=c(-12,0),
       main=expression(paste('Bifurcation set for ',sigma,',',tau,' (',beta,' = 1)')),cex.main=1.6,cex.lab=1.8,cex.axis=1.2)
-curve(MF01tau_critical2,4,15,add=T)
+curve(MF01tau_critical2,4,15,add=TRUE)
+
+b=1;sigma=10
+abline(h= MF01tau_critical1(s=sigma),col='blue')
+abline(h= MF01tau_critical2(s=sigma),col='blue')
+abline(v=10,col='blue',lty=3)
+
 
 # check hysteresis
 d=1
@@ -320,9 +342,12 @@ abline(v= MF01tau_critical2(s=sigma))
 sigma=7
 abline(v= MF01tau_critical1(s=sigma))
 abline(v= MF01tau_critical2(s=sigma))
+
 sigma=10
-abline(v= MF01tau_critical1(s=sigma))
-abline(v= MF01tau_critical2(s=sigma))
+abline(v= MF01tau_critical1(s=sigma),col='blue')
+abline(v= MF01tau_critical2(s=sigma),col='blue')
+abline(v=10,col='blue',lty=3)
+
 sigma=15
 abline(v= MF01tau_critical1(s=sigma))
 abline(v= MF01tau_critical2(s=sigma))
@@ -349,11 +374,12 @@ MF01tau_critical2=function(s,b=beta)
 
 curve(MF01tau_critical1,4,20,ylim=c(-14,0),ylab=expression(tau),xlab=expression(sigma),bty='n',cex.main=1.6,cex.lab=1.8,cex.axis=1.2,
       main=expression(paste('Bifurcation set for ',sigma,',',tau,' (',beta,' = 1)')),lwd=2)
-curve(MF01tau_critical2,4,20,add=T,lwd=2)
+curve(MF01tau_critical2,4,20,add=TRUE,lwd=2)
 abline(h=-1,col='green')
 abline(h=-3,col='red')
 abline(h=-5,col='blue')
 abline(h=-12,col='black')
+text(18,-11.8,expression(tau=='-12'),cex=1.2)
 
 text(15.5,-4.1,expression(paste('logarithmically to -', infinity)),cex=1.2)
 text(16.5,-9.5,expression(paste('linearly to -', infinity)),cex=1.2)
@@ -384,7 +410,7 @@ for(sigma in sigmas)
   if(length(sol)==1) sol=c(sol, NA, NA)
   dat[i,]=c(sigma,sol)
 }
-matplot(dat[,1],dat[,-1],pch=1,col='blue',bty='n',cex=c(.4,.1,.4),xlab=expression(sigma),ylab=expression(mu),add=T)
+matplot(dat[,1],dat[,-1],pch=1,col='blue',bty='n',cex=c(.4,.1,.4),xlab=expression(sigma),ylab=expression(mu),add=TRUE)
 
 tau=-1
 sigmas=seq(4,18,length=200)
@@ -397,13 +423,13 @@ for(sigma in sigmas)
   if(length(sol)==1) sol=c(sol, NA, NA)
   dat[i,]=c(sigma,sol)
 }
-matplot(dat[,1],dat[,-1],pch=1,col='green',bty='n',cex=c(.4,.1,.4),xlab=expression(sigma),ylab='p',add=T)
+matplot(dat[,1],dat[,-1],pch=1,col='green',bty='n',cex=c(.4,.1,.4),xlab=expression(sigma),ylab='p',add=TRUE)
 
 # panel 3: potential function
 V= function (m) (1/2)*m^2-(1/(sigma*beta))*log(1+exp(beta*(tau+sigma*m)))
 MF01tau_critical1(15.684)
 
-sigmas=c(15.684,seq(5,60,5))
+sigmas=c(15.684,5,25,45,60)
 i=0
 beta=1
 tau=-12
@@ -416,10 +442,10 @@ for(sigma in sigmas)
 text(.6,.25,expression(paste(sigma,' = 5')),cex=1.2)
 text(.44,-.2,expression(paste(sigma,' = 60')),cex=1.2)
 
-points(.9,.43,pch=19,cex=3)
+points(.9,.43,pch=19,cex=2.2)
 arrows(.9,.43,.8,.352,length = 0.1,col='blue',lwd=1.5)
 
-points(.28,-.027,pch=19,cex=3)
+points(.28,-.027,pch=19,cex=2.2)
 arrows(.28,-.027,.38,-.09,length = 0.1,col='blue',lwd=1.5)
 
 
@@ -428,7 +454,7 @@ dev.off()
 ## Figure 6
 pdf('figure6.pdf',h=5,w=10)#,paper='a4r')
 
-layout(matrix(1:5,1,5,byrow=T))
+layout(matrix(1:5,1,5,byrow=TRUE))
 
 
 MF01 <-function(p) 1/(1+exp(-beta*(sigma*p+tau)))-p
@@ -441,7 +467,7 @@ sigmas=seq(5,8,1)
 
 curve(MF01tau_critical2,4,9,ylim=c(-4,-1.5),ylab=expression(tau),xlab=expression(sigma),bty='n',cex.main=1.6,cex.lab=1.8,cex.axis=1.2,
       main=expression(paste('Bifurcation set for ',sigma,',',tau)),lwd=2)
-curve(MF01tau_critical1,4,6.5,add=T,lwd=2)
+curve(MF01tau_critical1,4,6.5,add=TRUE,lwd=2)
 abline(h=-3,col='red')
 points(x=sigmas,y=rep(-3,4))
 
